@@ -6,6 +6,8 @@ on:
     branches:
       - "build-octofit-app"
     paths:
+      - ".github/scripts/**"
+      - ".github/workflows/2-step.yml"
       - "octofit-tracker/backend/src/models/**"
       - "octofit-tracker/backend/src/scripts/**"
       - "octofit-tracker/backend/tests/data.contract.test.ts"
