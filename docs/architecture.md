@@ -43,13 +43,13 @@ flowchart LR
 
 ## Decisões de implementação
 
-- **Camada de apresentação**: componentes React consomem a API pelo cliente compartilhado, sem acessar o banco. Cada capacidade apresenta estados acessíveis de carregamento, vazio e erro, além dos dados retornados pela API.
-- **Camada de lógica**: rotas Express mantêm o contrato HTTP e delegam validações e regras de negócio aos serviços. Entradas inválidas, referências inexistentes e pessoas não encontradas geram respostas 4xx intencionais.
-- **Camada de dados**: modelos Mongoose definem campos obrigatórios e referências. O seed usa os modelos da aplicação, é idempotente e preserva registros não relacionados.
-- **Registro de atividades**: validar formato e existência de `userId` e `teamId` antes de criar a atividade; persistir os identificadores como `user` e `team`, calcular `points` como `minutes` e definir `occurredAt` no momento da criação.
-- **Gerenciamento de equipes**: exigir `name` e `mascot`, preservar os valores enviados e validar integrantes informados antes de salvar suas referências.
-- **Placar**: somar os pontos das atividades por equipe, ordenar do maior total para o menor e atribuir posições começando em 1.
-- **Sugestões de treino**: localizar a pessoa pelo e-mail; priorizar o foco de sua atividade mais recente e, na ausência dela, usar `fitnessGoal`. Retornar treinos desse foco com um motivo explicativo; e-mail sem pessoa correspondente retorna 404.
+- Decisão da camada de apresentação: componentes React consomem a API pelo cliente compartilhado, sem acessar o banco. Cada capacidade apresenta estados acessíveis de carregamento, vazio e erro, além dos dados retornados pela API.
+- Decisão da camada de lógica: rotas Express mantêm o contrato HTTP e delegam validações e regras de negócio aos serviços. Entradas inválidas, referências inexistentes e pessoas não encontradas geram respostas 4xx intencionais.
+- Decisão da camada de dados: modelos Mongoose definem campos obrigatórios e referências. O seed usa os modelos da aplicação, é idempotente e preserva registros não relacionados.
+- Abordagem para registro de atividades: validar formato e existência de `userId` e `teamId` antes de criar a atividade; persistir os identificadores como `user` e `team`, calcular `points` como `minutes` e definir `occurredAt` no momento da criação.
+- Abordagem para gerenciamento de equipes: exigir `name` e `mascot`, preservar os valores enviados e validar integrantes informados antes de salvar suas referências.
+- Abordagem para o placar: somar os pontos das atividades por equipe, ordenar do maior total para o menor e atribuir posições começando em 1.
+- Abordagem para sugestões de treino: localizar a pessoa pelo e-mail; priorizar o foco de sua atividade mais recente e, na ausência dela, usar `fitnessGoal`. Retornar treinos desse foco com um motivo explicativo; e-mail sem pessoa correspondente retorna 404.
 
 ## Plano de testes
 

@@ -249,8 +249,10 @@ test('workflow-level write permissions are rejected', () => {
 
 test('etapa um exige um plano de arquitetura preenchido', () => {
   const root = copyAll();
-  assert.throws(() => checks['step1-architecture'](root), /Architecture plan must complete/);
   const architecture = path.join(root, 'docs/architecture.md');
+  fs.writeFileSync(architecture, fs.readFileSync(architecture, 'utf8')
+    .replaceAll(/^(- (?:Decisão|Abordagem).+):.*$/gim, '$1:'));
+  assert.throws(() => checks['step1-architecture'](root), /Architecture plan must complete/);
   fs.writeFileSync(architecture, fs.readFileSync(architecture, 'utf8').replaceAll(/^(- .+):\s*$/gm, '$1: Aplicar os contratos e preservar os limites entre camadas.'));
   assert.doesNotThrow(() => checks['step1-architecture'](root));
 });
