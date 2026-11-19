@@ -43,22 +43,27 @@ flowchart LR
 
 ## Decisões de implementação
 
-Registre seu plano aqui antes de editar o código.
-
-- Decisão da camada de apresentação:
-- Decisão da camada de lógica:
-- Decisão da camada de dados:
-- Abordagem para registro de atividades:
-- Abordagem para gerenciamento de equipes:
-- Abordagem para o placar:
-- Abordagem para sugestões de treino:
+- **Camada de apresentação**: componentes React consomem a API pelo cliente compartilhado, sem acessar o banco. Cada capacidade apresenta estados acessíveis de carregamento, vazio e erro, além dos dados retornados pela API.
+- **Camada de lógica**: rotas Express mantêm o contrato HTTP e delegam validações e regras de negócio aos serviços. Entradas inválidas, referências inexistentes e pessoas não encontradas geram respostas 4xx intencionais.
+- **Camada de dados**: modelos Mongoose definem campos obrigatórios e referências. O seed usa os modelos da aplicação, é idempotente e preserva registros não relacionados.
+- **Registro de atividades**: validar formato e existência de `userId` e `teamId` antes de criar a atividade; persistir os identificadores como `user` e `team`, calcular `points` como `minutes` e definir `occurredAt` no momento da criação.
+- **Gerenciamento de equipes**: exigir `name` e `mascot`, preservar os valores enviados e validar integrantes informados antes de salvar suas referências.
+- **Placar**: somar os pontos das atividades por equipe, ordenar do maior total para o menor e atribuir posições começando em 1.
+- **Sugestões de treino**: localizar a pessoa pelo e-mail; priorizar o foco de sua atividade mais recente e, na ausência dela, usar `fitnessGoal`. Retornar treinos desse foco com um motivo explicativo; e-mail sem pessoa correspondente retorna 404.
 
 ## Plano de testes
 
-Registre os comandos executados e o significado de cada falha.
+Executar nesta ordem durante a implementação, para verificar cada camada antes de avançar:
 
-- Testes da camada de dados: `npm run test:data --prefix octofit-tracker/backend`
-- Testes da API: `npm run test:api --prefix octofit-tracker/backend`
-- Testes do frontend: `npm test --prefix octofit-tracker/frontend`
-- Compilação do backend: `npm run build --prefix octofit-tracker/backend`
-- Compilação do frontend: `npm run build --prefix octofit-tracker/frontend`
+1. `npm run test:data --prefix octofit-tracker/backend` — valida schemas e seed.
+2. `npm run test:api --prefix octofit-tracker/backend` — valida os contratos HTTP e regras dos serviços.
+3. `npm test --prefix octofit-tracker/frontend` — valida conteúdo, chamadas à API e estados das telas.
+4. `npm run build --prefix octofit-tracker/backend` e `npm run build --prefix octofit-tracker/frontend` — verificam tipos e build de produção.
+
+Baseline executado antes da implementação:
+
+- **Dados** (`npm run test:data --prefix octofit-tracker/backend`): 4 falhas e 1 aprovação. As falhas indicam ausência das validações obrigatórias de usuário, equipe, atividade e treino; o teste de seed/idempotência passou.
+- **API** (`npm run test:api --prefix octofit-tracker/backend`): 4 falhas. Atividades e equipes inválidas retornam 501 em vez de 400, o placar não agrega atividades e a sugestão de Mona não corresponde ao foco esperado.
+- **Frontend** (`npm test --prefix octofit-tracker/frontend`): 15 falhas. As telas não exibem o conteúdo esperado nem estados de carregamento, vazio e erro, e a chamada de sugestões não corresponde à pessoa esperada.
+- **Builds** (`npm run build --prefix octofit-tracker/backend` e `npm run build --prefix octofit-tracker/frontend`): ambos passaram no baseline.
+- **Validação auxiliar do exercício** (`node --test tests/exercise-validation.test.mjs`): 4 de 42 testes falharam porque o badge “Copy Exercise” do README não aponta para o template `dev-pods`; é uma falha de metadados, separada dos contratos do OctoFit.
