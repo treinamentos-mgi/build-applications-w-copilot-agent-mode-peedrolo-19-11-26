@@ -257,9 +257,18 @@ test('etapa um exige um plano de arquitetura preenchido', () => {
   assert.doesNotThrow(() => checks['step1-architecture'](root));
 });
 
+test('data grader requires model validation', () => {
+  const root = copyAll();
+  const model = path.join(root, 'octofit-tracker/backend/src/models/User.ts');
+  fs.writeFileSync(model, fs.readFileSync(model, 'utf8').replaceAll(', required: true', ''));
+  assert.throws(() => checks['step2-data'](root), /User schema must include required validation/);
+});
+
 test('data grader rejects placeholder seed script', () => {
   const root = copyAll();
-  assert.throws(() => checks['step2-data'](root), /required validation|placeholder/);
+  const seed = path.join(root, 'octofit-tracker/backend/src/scripts/seed.ts');
+  fs.writeFileSync(seed, `${fs.readFileSync(seed, 'utf8')}\n// TODO implement seed\n`);
+  assert.throws(() => checks['step2-data'](root), /Seed script still contains starter placeholder text/);
 });
 
 test('frontend grader requires shared API usage and visible states', () => {
